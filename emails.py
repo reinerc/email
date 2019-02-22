@@ -2,44 +2,56 @@
 Simple email program, that is checking for
 unread emails on the server
 """
-
+import sys
 from getpass import getpass
 
 import imapclient
-import email
-from email.parser import Parser
+
+# modul email is not compatible between different versions 
+# of python 3.x , not used anymore in this program 
+#import email
+#from email.parser import Parser
+
+#
+# Individual Parameters to configure
+# 
+
+host="imap.web.de"
+user="rczerwi@web.de"
+
+
+# if _short is True, then print also information (from,subject)
+# of the unread mails
+_short = False
+
+##############################################
+
 
 def search_uids(imapserver,folders,searchopt=["UNSEEN"]):
    hh={}
    for fold in folders:
-       imapserver.select_folder(fold)
+       imapserver.select_folder(fold,readonly=True)
        uids=serv.search(searchopt)
        if uids!=[]:hh[fold]=uids
    return hh
 
-def get_messages(server,folder,uids):
-  server.select_folder(folder)
+def get_messages(server,folder,uids,readonly=True):
+  server.select_folder(folder,readonly=readonly)
   a=server.fetch(uids,['BODY[]'])
   messages={}
   for m in a.keys():
-     messages[m]=Parser().parsestr(a[m]['BODY[]'])
+#     messages[m]=Parser().parsestr(a[m][b'BODY[]'])
+     messages[m]=a[m][b'BODY[]']
   return messages
 
-def get_senders(messages):
-    return list(set(map(lambda x:x['From'],messages.values())))
+def get_messagetag(message,tag='Subject:'):
+   """
+Search in a string or bytestream for lines
+beginning with the parameter tag (default:'Subject:')
+   """
+   return list(filter(lambda x:x.startswith(tag),message.strip().decode('utf-8',errors='replace').splitlines()))
 
-def store_attachements(msg,prefix=""):
-# store the attachment of an email 
-# the_email must have type email.message
-   for part in msg.walk():
-      if part.get_filename():
-        f=open(prefix+ part.get_filename()+part.get_content_type().split("/")[1],"wb")
-        f.write(part.get_payload(decode=True))
-        f.close()
 
- 
-host="imap.web.de"
-user="rczerwi@web.de"
 
 serv=imapclient.IMAPClient(host,ssl=True)
 
@@ -52,10 +64,16 @@ l=serv.list_folders()
 h= search_uids(serv,filter(lambda x:x!='Postausgang',map(lambda x:x[2],filter(lambda x:len(x[0])==1 ,l))))
        
 print(h)
-#for fold in filter(lambda x:x!='Postausgang',map(lambda x:x[2],filter(lambda x:len(x[0])==1 ,l))):
-#     print fold
-#     serv.select_folder(fold)
-#     print serv.search(["UNSEEN"])
+
+if _short:
+  sys.exit(0)
+
+m={}
+for k in h.keys():
+   m=get_messages(serv,k,h[k])
+   print("Folder :" +k)
+   for message in m.keys():
+     print (get_messagetag(m[message],'From:'),get_messagetag(m[message]))
 
 
 #serv.logout()
