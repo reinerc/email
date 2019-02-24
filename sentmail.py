@@ -7,7 +7,14 @@ import smtplib
 import json
 import sys
 
+
+
 conffile = "test.json"
+
+if len(sys.argv) > 1:
+  conffile = sys.argv[1]
+  print(conffile)
+
 f=open(conffile,"rt")
 dat = json.load(f)
 import getpass
