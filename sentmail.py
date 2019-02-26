@@ -5,20 +5,19 @@ Send an email
 import json
 import smtplib
 import getpass
-
+import sys
 
 
 conffile = "test.json"
-<<<<<<< HEAD
+
 
 if len(sys.argv) > 1:
   conffile = sys.argv[1]
   print(conffile)
 
-f=open(conffile,"rt")
-=======
+
 f = open(conffile, "rt")
->>>>>>> d7e27848f43d3bdd9114514812b9d5d3e5ae0a46
+
 dat = json.load(f)
 
 #
