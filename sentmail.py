@@ -18,7 +18,7 @@ if len(sys.argv) > 1:
 
 f = open(conffile, "rt")
 
-dat = json.load(f)
+dat = json.loads(f.read().encode('utf-8').decode('utf-8','replace'))
 
 #
 # Get data from JSON File
@@ -83,7 +83,7 @@ else:
     message['Reply-to'] = FROM
     message['To'] = TO
 
-    text = MIMEText("Message Body")
+    text = MIMEText(TEXT)
     message.attach(text)
 
     # directory = "C:\ExamplePDF.pdf"
