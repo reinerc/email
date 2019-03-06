@@ -18,8 +18,8 @@ if len(sys.argv) > 1:
 
 f = open(conffile, "rt")
 
-dat = json.loads(f.read().encode('utf-8').decode('utf-8','replace'))
-
+#dat = json.loads(f.read().encode('utf-8').decode('utf-8','replace'))
+dat = json.load(f)
 #
 # Get data from JSON File
 #
@@ -53,15 +53,18 @@ if not APPENDFILE:
     # Email without attachment
     #
     # Copy-pasted from
-    # https://stackoverflow.com/questions/6270782/how-to-send-an-email-with-python
+    # https://stackoverflow.com/questions/11396799/how-to-send-email-using-python-3
     #
+    from email.mime.text import MIMEText
 
-    message = """From: %s
-To: %s
-Subject: %s
+    message = MIMEText(text,'plain',_charset="utf-8")
 
-%s
-  """ % (FROM, TO, SUBJECT, text)
+    message['Subject'] = SUBJECT
+    message['From'] = FROM
+    message['Reply-to'] = FROM
+    message['To'] = TO
+
+
 
 else:
     #
@@ -83,8 +86,9 @@ else:
     message['Reply-to'] = FROM
     message['To'] = TO
 
-    text = MIMEText(TEXT)
-    message.attach(text)
+    textmessage = MIMEText(text,'plain',_charset="utf-8")
+# MIMEText(TEXT)
+    message.attach(textmessage)
 
     # directory = "C:\ExamplePDF.pdf"
     with open(APPENDFILE, "rb") as opened:
@@ -96,15 +100,15 @@ else:
 
     # print("not implemeted")
     # sys.exit(1)
-    message = message.as_string()
+ #   message = message.as_string()
 
 server.login(LOGIN, p)
 
-print(message)
-print(TO)
-print(TEXTFILE)
+#print(message)
+#print(TO)
+#print(TEXTFILE)
 
-server.sendmail(FROM, TO, message)
+server.sendmail(FROM, TO, message.as_string())
 # or with a copy to me:
 # server.sendmail(FROM, [TO,FROM], message)
 
