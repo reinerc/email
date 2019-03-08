@@ -109,7 +109,7 @@ server.login(LOGIN, p)
 #print(TEXTFILE)
 
 server.sendmail(FROM, TO, message.as_string())
-# or with a copy to me:
-# server.sendmail(FROM, [TO,FROM], message)
+# and sent  a copy to me:
+server.sendmail(FROM, FROM, message.as_string())
 
 server.quit()
