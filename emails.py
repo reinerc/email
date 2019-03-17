@@ -5,6 +5,7 @@ unread messages on the server
 
 import sys
 from getpass import getpass
+import json
 
 import imapclient
 
@@ -19,6 +20,19 @@ import imapclient
 
 host = "imap.web.de"
 user = "rczerwi@web.de"
+p = None
+
+conffile = None
+
+if len(sys.argv) > 1:
+  conffile = sys.argv[1]
+
+if conffile:
+   f = open(conffile,"tr")
+   dat = json.load(f)
+   host = dat.get("imapserver",host)
+   user = dat.get("account",user)
+   p = dat.get("password",None)
 
 # if _short is True, print further information (from, subject)
 # of unread mails
@@ -57,7 +71,8 @@ def get_messagetag(message, tag='Subject:'):
 
 serv = imapclient.IMAPClient(host, ssl=True)
 
-p = getpass(prompt="Email password:")
+if not(p):
+  p = getpass(prompt="Email password:")
 
 serv.login(user, p)
 
