@@ -21,6 +21,7 @@ import imapclient
 host = "imap.web.de"
 user = "rczerwi@web.de"
 p = None
+folders = None
 
 conffile = None
 
@@ -33,6 +34,7 @@ if conffile:
    host = dat.get("imapserver",host)
    user = dat.get("account",user)
    p = dat.get("password",None)
+   folders = dat.get("folders",None)
 
 # if _short is True, print further information (from, subject)
 # of unread mails
@@ -76,9 +78,13 @@ if not(p):
 
 serv.login(user, p)
 
-l = serv.list_folders()
-
-h = search_uids(serv, filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
+if not(folders):
+  l = serv.list_folders()
+#  print(l)
+#h = search_uids(serv, filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
+  folders = list(filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
+h = search_uids(serv, folders)
+#print(list(folders))
 
 print(h)
 
