@@ -6,8 +6,14 @@ unread messages on the server
 import sys
 from getpass import getpass
 import json
+import logging
+
+logger = logging.getLogger('email_client')
+logger.setLevel(logging.INFO)
 
 import imapclient
+
+logging.basicConfig(level=logging.WARN)
 
 # module email is not compatible between different versions
 # of Python 3.x, so it is not used anymore in this program
@@ -82,16 +88,20 @@ serv.login(user, p)
 
 if not(folders):
   l = serv.list_folders()
-#  print(l)
+  logger.debug(l)
 #h = search_uids(serv, filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
   folders = list(filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
+logger.debug("Folders :{}".format(folders))
+logger.debug("Don't used Folders:{}".format(nofolders))
 folders = list(set(folders).difference(nofolders))
+logger.info("Folders :{}".format(folders))
 h = search_uids(serv, folders)
 #print(list(folders))
 
-print(h)
+logging.debug(h)
 
 if _short:
+    print(h)
     sys.exit(0)
 
 m = {}
