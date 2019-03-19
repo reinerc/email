@@ -37,12 +37,15 @@ if len(sys.argv) > 1:
 if conffile:
    f = open(conffile,"tr")
    dat = json.load(f)
-   host = dat.get("imapserver",host)
-   user = dat.get("account",user)
-   p = dat.get("password",None)
-   folders = dat.get("folders",None) # list of folders to scan, by default, the 
-                                     # program go into every folder
-   nofolders= dat.get("no_folders",[]) # list of folders not to scan
+else:
+   dat={"imapserver" : "imap.web.de","account": "rczerwi@web.de"}
+
+host = dat.get("imapserver",host)
+user = dat.get("account",user)
+p = dat.get("password",None)
+folders = dat.get("folders",None) # list of folders to scan, by default, the 
+                                  # program go into every folder
+nofolders= dat.get("no_folders",[]) # list of folders not to scan
 
 # if _short is True, print further information (from, subject)
 # of unread mails
