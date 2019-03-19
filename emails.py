@@ -34,7 +34,9 @@ if conffile:
    host = dat.get("imapserver",host)
    user = dat.get("account",user)
    p = dat.get("password",None)
-   folders = dat.get("folders",None)
+   folders = dat.get("folders",None) # list of folders to scan, by default, the 
+                                     # program go into every folder
+   nofolders= dat.get("no_folders",[]) # list of folders not to scan
 
 # if _short is True, print further information (from, subject)
 # of unread mails
@@ -83,6 +85,7 @@ if not(folders):
 #  print(l)
 #h = search_uids(serv, filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
   folders = list(filter(lambda x: x != 'Postausgang', map(lambda x: x[2], filter(lambda x: len(x[0]) == 1, l))))
+folders = list(set(folders).difference(nofolders))
 h = search_uids(serv, folders)
 #print(list(folders))
 
