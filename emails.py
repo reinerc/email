@@ -11,6 +11,7 @@ import logging
 logger = logging.getLogger('email_client')
 logger.setLevel(logging.INFO)
 
+from email.header import decode_header
 import imapclient
 
 logging.basicConfig(level=logging.WARN)
@@ -112,6 +113,6 @@ for k in h.keys():
     m = get_messages(serv, k, h[k])
     print("Folder :" + k)
     for message in m.keys():
-        print(get_messagetag(m[message], 'From:'), get_messagetag(m[message]))
+        print(get_messagetag(m[message], 'From:'), decode_header(get_messagetag(m[message])[0]))
 
 # serv.logout()
